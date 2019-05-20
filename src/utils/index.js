@@ -14,7 +14,7 @@ import {
   MESSAGE_TYPE_MARKER,
   MESSAGE_TYPE_TF2,
   OBJECT_TYPE_ARROW,
-  MESSAGE_TYPE_INTERACTIVEMARKER,
+  MESSAGE_TYPE_INTERACTIVEMARKER_UPDATE,
 } from 'amphion/src/utils/constants';
 
 import { DEFAULT_COLOR_X_AXIS } from 'amphion/src/utils/defaults';
@@ -132,7 +132,7 @@ export const vizOptions = [
   },
   {
     name: 'Interactive Marker',
-    messageTypes: [MESSAGE_TYPE_INTERACTIVEMARKER],
+    messageTypes: [MESSAGE_TYPE_INTERACTIVEMARKER_UPDATE],
     description: 'Lorem ipsum',
     exampleLink: '',
     docsLink: '',

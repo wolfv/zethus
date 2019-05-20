@@ -255,7 +255,6 @@ THREE.TransformControls = function ( camera, domElement ) {
     }
 
     var intersect = ray.intersectObjects( raycastObj, true )[ 0 ] || false;
-
     if ( intersect ) {
 
       this.axis = intersect.object.name;
@@ -269,7 +268,6 @@ THREE.TransformControls = function ( camera, domElement ) {
   };
 
   this.pointerDown = function ( pointer ) {
-
     if ( this.object === undefined || this.dragging === true || ( pointer.button !== undefined && pointer.button !== 0 ) ) return;
 
     if ( ( pointer.button === 0 || pointer.button === undefined ) && this.axis !== null ) {
@@ -292,7 +290,7 @@ THREE.TransformControls = function ( camera, domElement ) {
 
         }
 
-        if ( space === 'local' && (this.mode === 'rotate' || this.mode === 'combined') ) {
+        if ( space === 'local' && (this.mode === 'rotate' || ( this.mode === 'combined' && this.axis.indexOf('R') !== -1) ) ) {
 
           var snap = this.rotationSnap;
 
@@ -350,7 +348,7 @@ THREE.TransformControls = function ( camera, domElement ) {
 
     pointEnd.copy( planeIntersect.point ).sub( worldPositionStart );
 
-    if ( (mode === 'translate' || mode === 'combined') && axis.indexOf('R') === -1 ) {
+    if ( mode === 'translate' || (mode === 'combined' && axis.indexOf('R') === -1) ) {
 
       // Apply translate
 
@@ -366,6 +364,7 @@ THREE.TransformControls = function ( camera, domElement ) {
       if ( axis.indexOf( 'Y' ) === - 1 ) offset.y = 0;
       if ( axis.indexOf( 'Z' ) === - 1 ) offset.z = 0;
 
+
       if ( space === 'local' && axis !== 'XYZ' ) {
 
         offset.applyQuaternion( quaternionStart ).divide( parentScale );
@@ -377,7 +376,6 @@ THREE.TransformControls = function ( camera, domElement ) {
       }
 
       object.position.copy( offset ).add( positionStart );
-
       // Apply translation snap
 
       if ( this.translationSnap ) {
@@ -488,7 +486,7 @@ THREE.TransformControls = function ( camera, domElement ) {
 
     }
 
-    if ( mode === 'rotate' || mode === 'combined') {
+    if ( mode === 'rotate' || (mode === 'combined' && axis.indexOf('R') !== -1)) {
 
       offset.copy( pointEnd ).sub( pointStart );
 
@@ -768,7 +766,7 @@ THREE.TransformControlsGizmo = function () {
   var scaleHandleGeometry = new THREE.BoxBufferGeometry( 0.125, 0.125, 0.125 );
 
   var lineGeometry = new THREE.BufferGeometry( );
-  lineGeometry.addAttribute( 'position', new THREE.Float32BufferAttribute( [ 1, 0, 0,	2, 0, 0 ], 3 ) );
+  lineGeometry.addAttribute( 'position', new THREE.Float32BufferAttribute( [ 1, 0, 0,	1.5, 0, 0 ], 3 ) );
 
   var CircleGeometry = function ( radius, arc ) {
 
@@ -803,18 +801,18 @@ THREE.TransformControlsGizmo = function () {
 
   var gizmoTranslate = {
     X: [
-      [ new THREE.Mesh( arrowGeometry, matRed ), [ 2, 0, 0 ], [ 0, 0, - Math.PI / 2 ], null, 'fwd' ],
-      [ new THREE.Mesh( arrowGeometry, matRed ), [ 2, 0, 0 ], [ 0, 0, Math.PI / 2 ], null, 'bwd' ],
+      [ new THREE.Mesh( arrowGeometry, matRed ), [ 1.5, 0, 0 ], [ 0, 0, - Math.PI / 2 ], null, 'fwd' ],
+      [ new THREE.Mesh( arrowGeometry, matRed ), [ 1.5, 0, 0 ], [ 0, 0, Math.PI / 2 ], null, 'bwd' ],
       [ new THREE.Line( lineGeometry, matLineRed ) ]
     ],
     Y: [
-      [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 2, 0 ], null, null, 'fwd' ],
-      [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 2, 0 ], [ Math.PI, 0, 0 ], null, 'bwd' ],
+      [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 1.5, 0 ], null, null, 'fwd' ],
+      [ new THREE.Mesh( arrowGeometry, matGreen ), [ 0, 1.5, 0 ], [ Math.PI, 0, 0 ], null, 'bwd' ],
       [ new THREE.Line( lineGeometry, matLineGreen ), null, [ 0, 0, Math.PI / 2 ]]
     ],
     Z: [
-      [ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 2 ], [ Math.PI / 2, 0, 0 ], null, 'fwd' ],
-      [ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 2 ], [ - Math.PI / 2, 0, 0 ], null, 'bwd' ],
+      [ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 1.5 ], [ Math.PI / 2, 0, 0 ], null, 'fwd' ],
+      [ new THREE.Mesh( arrowGeometry, matBlue ), [ 0, 0, 1.5 ], [ - Math.PI / 2, 0, 0 ], null, 'bwd' ],
       [ new THREE.Line( lineGeometry, matLineBlue ), null, [ 0, - Math.PI / 2, 0 ]]
     ],
     XYZ: [
@@ -839,13 +837,13 @@ THREE.TransformControlsGizmo = function () {
 
   var pickerTranslate = {
     X: [
-      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 1.6, 0, 0 ], [ 0, 0, - Math.PI / 2 ]]
+      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 0.65, 4, 1, false ), matInvisible ), [ 1.25, 0, 0 ], [ 0, 0, - Math.PI / 2 ]]
     ],
     Y: [
-      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 0, 1.6, 0 ]]
+      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 0.65, 4, 1, false ), matInvisible ), [ 0, 1.25, 0 ]]
     ],
     Z: [
-      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 1, 4, 1, false ), matInvisible ), [ 0, 0, 1.6 ], [ Math.PI / 2, 0, 0 ]]
+      [ new THREE.Mesh( new THREE.CylinderBufferGeometry( 0.2, 0, 0.65, 4, 1, false ), matInvisible ), [ 0, 0, 1.25 ], [ Math.PI / 2, 0, 0 ]]
     ],
     XYZ: [
       [ new THREE.Mesh( new THREE.OctahedronBufferGeometry( 0.2, 0 ), matInvisible ) ]
@@ -1106,8 +1104,56 @@ THREE.TransformControlsGizmo = function () {
   this.picker[ "rotate" ].visible = false;
   this.picker[ "scale" ].visible = false;
 
-  // updateMatrixWorld will update transformations and appearance of individual handles
+  this.disableHandles = function(handle) {
+    // Hide disabled axes
+    switch (handle.name) {
+      case 'X':
+        handle.visible = handle.visible && this.showX;
+        break;
+      case 'Y':
+        handle.visible = handle.visible && this.showY;
+        break;
+      case 'Z':
+        handle.visible = handle.visible && this.showZ;
+        break;
+    }
 
+    switch (handle.name) {
+      case 'XY':
+        handle.visible = this.showXY;
+        break;
+      case 'YZ':
+        handle.visible = this.showYZ;
+        break;
+      case 'XZ':
+        handle.visible = this.showXZ;
+        break;
+      case 'XYZ':
+        handle.visible = this.showXYZ;
+        break;
+    }
+
+    switch (handle.name) {
+      case 'RX':
+        handle.visible = this.showRX;
+        break;
+      case 'RY':
+        handle.visible = this.showRY;
+        break;
+      case 'RZ':
+        handle.visible = this.showRZ;
+        break;
+      case 'RE':
+        handle.visible = this.showRE;
+        break;
+      case 'RXYZE':
+        handle.visible = handle.visible && this.showRXYZE;
+        break;
+
+    }
+  }
+
+  // updateMatrixWorld will update transformations and appearance of individual handles0
   this.updateMatrixWorld = function () {
 
     var space = this.space;
@@ -1419,14 +1465,14 @@ THREE.TransformControlsGizmo = function () {
       }
 
 
-      if ( this.mode === 'rotate' || this.mode === 'combined') {
+      if ( this.mode === 'rotate' || ( this.mode === 'combined' && handle.name.indexOf('R') !== -1) ) {
 
         // Align handles to current local or world rotation
 
         tempQuaternion2.copy( quaternion );
         alignVector.copy( this.eye ).applyQuaternion( tempQuaternion.copy( quaternion ).inverse() );
 
-        if ( handle.name.search( "E" ) !== - 1 ) {
+        if ( handle.name.search( "RE" ) !== - 1 ) {
 
           handle.quaternion.setFromRotationMatrix( lookAtMatrix.lookAt( this.eye, zeroVector, unitY ) );
 
@@ -1458,41 +1504,9 @@ THREE.TransformControlsGizmo = function () {
 
       }
 
-      // Hide disabled axes
-      switch (handle.name) {
-        case 'X':
-          handle.visible = handle.visible && this.showX;
-          break;
-        case 'Y':
-          handle.visible = handle.visible && this.showY;
-          break;
-        case 'Z':
-          handle.visible = handle.visible && this.showZ;
-          break;
-      }
+      // Disable the hidden handles
+      this.disableHandles(handle);
 
-      switch (handle.name) {
-        case 'XY':
-          handle.visible = this.showXY;
-          break;
-        case 'YZ':
-          handle.visible = this.showYZ;
-          break;
-        case 'XZ':
-          handle.visible = this.showXZ;
-          break;
-        case 'XYZ':
-          handle.visible = this.showXYZ;
-          break;
-      }
-
-      if (handle.name === 'RE') {
-        handle.visible = this.showRE;
-      }
-
-      if (handle.name === 'RXYZE') {
-        handle.visible = this.showRXYZE;
-      }
 
       // highlight selected axis
 
@@ -1586,47 +1600,82 @@ THREE.TransformControlsPlane = function () {
 
     alignVector.copy( unitY );
 
-    switch ( this.mode ) {
+    if (this.mode === 'combined' && this.axis) {
+        if (this.axis.indexOf('R') === -1) {
+          switch ( this.axis ) {
 
-      case 'translate':
-      case 'scale':
-      case 'combined':
-        switch ( this.axis ) {
+            case 'X':
+              alignVector.copy( this.eye ).cross( unitX );
+              dirVector.copy( unitX ).cross( alignVector );
+              break;
+            case 'Y':
+              alignVector.copy( this.eye ).cross( unitY );
+              dirVector.copy( unitY ).cross( alignVector );
+              break;
+            case 'Z':
+              alignVector.copy( this.eye ).cross( unitZ );
+              dirVector.copy( unitZ ).cross( alignVector );
+              break;
+            case 'XY':
+              dirVector.copy( unitZ );
+              break;
+            case 'YZ':
+              dirVector.copy( unitX );
+              break;
+            case 'XZ':
+              alignVector.copy( unitZ );
+              dirVector.copy( unitY );
+              break;
+            case 'XYZ':
+              dirVector.set( 0, 0, 0 );
+              break;
 
-          case 'X':
-            alignVector.copy( this.eye ).cross( unitX );
-            dirVector.copy( unitX ).cross( alignVector );
-            break;
-          case 'Y':
-            alignVector.copy( this.eye ).cross( unitY );
-            dirVector.copy( unitY ).cross( alignVector );
-            break;
-          case 'Z':
-            alignVector.copy( this.eye ).cross( unitZ );
-            dirVector.copy( unitZ ).cross( alignVector );
-            break;
-          case 'XY':
-            dirVector.copy( unitZ );
-            break;
-          case 'YZ':
-            dirVector.copy( unitX );
-            break;
-          case 'XZ':
-            alignVector.copy( unitZ );
-            dirVector.copy( unitY );
-            break;
-          case 'XYZ':
-          case 'RE':
-            dirVector.set( 0, 0, 0 );
-            break;
-
+          }
+        } else {
+          dirVector.set( 0, 0, 0 );
         }
-        break;
-      case 'rotate':
-      default:
-        // special case for rotate
-        dirVector.set( 0, 0, 0 );
+    } else {
+      switch ( this.mode ) {
 
+        case 'translate':
+        case 'scale':
+          switch ( this.axis ) {
+
+            case 'X':
+              alignVector.copy( this.eye ).cross( unitX );
+              dirVector.copy( unitX ).cross( alignVector );
+              break;
+            case 'Y':
+              alignVector.copy( this.eye ).cross( unitY );
+              dirVector.copy( unitY ).cross( alignVector );
+              break;
+            case 'Z':
+              alignVector.copy( this.eye ).cross( unitZ );
+              dirVector.copy( unitZ ).cross( alignVector );
+              break;
+            case 'XY':
+              dirVector.copy( unitZ );
+              break;
+            case 'YZ':
+              dirVector.copy( unitX );
+              break;
+            case 'XZ':
+              alignVector.copy( unitZ );
+              dirVector.copy( unitY );
+              break;
+            case 'XYZ':
+            case 'RE':
+              dirVector.set( 0, 0, 0 );
+              break;
+
+          }
+          break;
+        case 'rotate':
+        default:
+          // special case for rotate
+          dirVector.set( 0, 0, 0 );
+
+      }
     }
 
     if ( dirVector.length() === 0 ) {

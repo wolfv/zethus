@@ -19,7 +19,7 @@ import {
   MESSAGE_TYPE_IMAGE,
   MESSAGE_TYPE_MARKER,
   MESSAGE_TYPE_POINTCLOUD,
-  MESSAGE_TYPE_INTERACTIVEMARKER,
+  MESSAGE_TYPE_INTERACTIVEMARKER_UPDATE,
 } from 'amphion/src/utils/constants';
 import shortid from 'shortid';
 
@@ -281,7 +281,7 @@ class Wrapper extends React.Component {
         return new Amphion.Path(this.ros, name, options);
       case MESSAGE_TYPE_IMAGE:
         return new Amphion.Image(this.ros, name, options);
-      case MESSAGE_TYPE_INTERACTIVEMARKER: {
+      case MESSAGE_TYPE_INTERACTIVEMARKER_UPDATE: {
         const interactiveMarkerOptions = {
           camera: this.camera,
           scene: this.scene,

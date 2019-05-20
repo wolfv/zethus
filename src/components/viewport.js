@@ -19,6 +19,7 @@ class Viewport extends React.Component {
     this.previousHeight = 0;
 
     this.controls = null;
+    this.transformControlsEnabled = true;
     this.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster();
     this.rayIntersection = new THREE.Vector3();
@@ -190,7 +191,7 @@ class Viewport extends React.Component {
   }
 
   onMouseDown(event) {
-    if (this.controls.enabled || this.transformControlEnabled) {
+    if (this.controls.enabled || this.transformControlsEnabled) {
       return;
     }
 
